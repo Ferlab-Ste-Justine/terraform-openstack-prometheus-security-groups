@@ -117,3 +117,40 @@ resource "openstack_networking_secgroup_rule_v2" "metrics_server_icmp_access_v6"
   remote_group_id   = each.value
   security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
 }
+
+//Allow port 9090, 9100 and icmp traffic among prometheus servers of this group
+resource "openstack_networking_secgroup_rule_v2" "self_node_exporter_access" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9100
+  port_range_max    = 9100
+  remote_group_id   = openstack_networking_secgroup_v2.prometheus_server.id
+  security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "self_prometheus_exporter_access" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9090
+  port_range_max    = 9090
+  remote_group_id   = openstack_networking_secgroup_v2.prometheus_server.id
+  security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "self_icmp_access_v4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_group_id   = openstack_networking_secgroup_v2.prometheus_server.id
+  security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "self_icmp_access_v6" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "ipv6-icmp"
+  remote_group_id   = openstack_networking_secgroup_v2.prometheus_server.id
+  security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
+}
