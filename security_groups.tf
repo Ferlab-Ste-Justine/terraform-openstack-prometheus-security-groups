@@ -1,5 +1,5 @@
 resource "openstack_networking_secgroup_v2" "prometheus_server" {
-  name                 = var.member_group_name
+  name                 = var.server_group_name
   description          = "Security group for prometheus servers"
   delete_default_rules = true
 }
