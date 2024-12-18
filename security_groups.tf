@@ -100,6 +100,18 @@ resource "openstack_networking_secgroup_rule_v2" "metrics_server_prometheus_expo
   security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
 }
 
+// Allow port 8200 for Vault telemetry access
+resource "openstack_networking_secgroup_rule_v2" "vault_telemetry_access" {
+  for_each          = { for idx, id in var.metrics_server_group_ids : idx => id }
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 8200
+  port_range_max    = 8200
+  remote_group_id   = each.value
+  security_group_id = openstack_networking_secgroup_v2.prometheus_server.id
+}
+
 resource "openstack_networking_secgroup_rule_v2" "metrics_server_icmp_access_v4" {
   for_each          = { for idx, id in var.metrics_server_group_ids : idx => id }
   direction         = "ingress"
